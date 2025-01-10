@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from pathlib import Path
 
-from agentlab.agents.generic_agent import USER_BEHAVIOR_AGENT
+from agentlab.agents.generic_agent import USER_BEHAVIOR_AGENT, AGENT_4o_VISION
 from browsergym.experiments.loop import EnvArgs, ExpArgs
 import boto3
 import os
@@ -13,7 +13,7 @@ from agentlab.agents import dynamic_prompting as dp
 from agentlab.agents.generic_agent.generic_agent_prompt import GenericPromptFlags
 import shutil
 import bgym
-
+from agentlab.ui_assistant import make_exp_args
 
 
 # Configure logging
@@ -28,15 +28,15 @@ app = FastAPI(title="Web Agent API", version="1.0.0")
 deviceViewports = {
     "desktop": {
         "width": 1280,
-        "height": 1280
+        "height": 720
     },
     "tablet": {
         "width": 800,
-        "height": 1280
+        "height": 720
     },
     "mobile": {
         "width": 380,
-        "height": 1280
+        "height": 720
     }
 }
 
@@ -102,14 +102,51 @@ def run_task(task: TaskRequest):
                 },
                 headless=False,
                 record_video=True,
-                wait_for_user_message=False,
+                wait_for_user_message=True,
                 viewport=deviceViewports.get(task.device, deviceViewports["desktop"]),
                 slow_mo=10,
             ),
         )
         
-        # Prepare and run experiment
+
+        # use AGENT_4o_VISION instead with make_exp_args
+
+
+#         exp_args = ExpArgs(
+#             agent_args=AGENT_4o_VISION,
+#             env_args=EnvArgs(
+#                 max_steps=1000,
+#                 task_seed=None,
+#                 task_name="openended", 
+#                 task_kwargs={
+#                     "start_url": task.url,
+#                 },
+#                 headless=False,
+#                 record_video=True,  # Enable recording
+#             ),
+#         )
+        
+#         # Set goal (not instruction) in task kwargs 
+#         exp_args.env_args.task_kwargs["goal"] = f"""{task.instruction}
+
+# Act like a real user browsing this website:
+# - Take time to read content
+# - Move mouse naturally between actions
+# - Hover over items of interest
+# - Type at human speed with occasional typos
+# - React to visual feedback
+# - Scroll naturally through content
+# Once you finished following the instructions, you may finish.
+# """
+        
+        # Prepare experiment
         exp_args.prepare(results_dir / "tasks")
+
+        # set goal
+        exp_args.env_args.task_kwargs["goal"] = f"""{task.instruction}
+
+Act like a real user browsing this website and once the instructions are followed (no need to do extra browsing), you may finish."""
+        
         result = exp_args.run()
         if result is None:
             raise ValueError("Task execution failed")
@@ -144,6 +181,4 @@ def run_task(task: TaskRequest):
     finally:
         cleanup_exp_dir(exp_dir)
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+run_task(TaskRequest(instruction="Find problems in the navigation bar", url="https://couch.com", device="desktop"))

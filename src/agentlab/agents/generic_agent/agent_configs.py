@@ -280,7 +280,7 @@ FLAGS_USER_BEHAVIOR = GenericPromptFlags(
     ),
     action=dp.ActionFlags(
         action_set=bgym.HighLevelActionSetArgs(
-            subsets=["bid", "coordinate"],  # Enable both element and coordinate actions
+            subsets=["bid", "coord"],  # Enable both element and coordinate actions
             multiaction=False
         ),
         long_description=False,
@@ -296,12 +296,12 @@ FLAGS_USER_BEHAVIOR = GenericPromptFlags(
     max_prompt_tokens=40_000,
     be_cautious=True,
     extra_instructions="""Act like a real user browsing this website:
-- Take time to read content
-- Move mouse naturally between actions
+- Move mouse naturally between actions, do not hover or click unless the mouse is moved to that location
 - Hover over items of interest
 - Type at human speed with occasional typos
 - React to visual feedback
-- Scroll naturally through content"""
+- Scroll naturally through content
+- Alway do an interaction after a think"""
 )
 
 USER_BEHAVIOR_AGENT = GenericAgentArgs(
