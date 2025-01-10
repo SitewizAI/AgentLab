@@ -42,4 +42,4 @@ VOLUME /data
 EXPOSE 8000
 
 # Start Xvfb and the application
-CMD Xvfb :99 -screen 0 1024x768x16 & uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & uvicorn main:app --host 0.0.0.0 --port 8000"]
