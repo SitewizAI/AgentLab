@@ -181,4 +181,4 @@ Act like a real user browsing this website and once the instructions are followe
     finally:
         cleanup_exp_dir(exp_dir)
 
-run_task(TaskRequest(instruction="Find problems in the navigation bar", url="https://couch.com", device="desktop"))
+# run_task(TaskRequest(instruction="Find problems in the navigation bar", url="https://couch.com", device="desktop"))
