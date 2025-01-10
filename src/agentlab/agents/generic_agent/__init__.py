@@ -16,6 +16,7 @@ from .agent_configs import (
     AGENT_4o,
     AGENT_4o_MINI,
     AGENT_4o_VISION,
+    USER_BEHAVIOR_AGENT
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "AGENT_8B",
     "RANDOM_SEARCH_AGENT",
     "AGENT_CUSTOM",
+    "USER_BEHAVIOR_AGENT"
 ]

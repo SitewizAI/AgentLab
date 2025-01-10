@@ -261,6 +261,55 @@ AGENT_4o_MINI = GenericAgentArgs(
     flags=FLAGS_GPT_4o,
 )
 
+# User behavior flags based on GPT-4o vision
+FLAGS_USER_BEHAVIOR = GenericPromptFlags(
+    obs=dp.ObsFlags(
+        use_html=False,           # Users don't see HTML
+        use_ax_tree=True,         # For accessibility
+        use_screenshot=True,      # Users primarily use visual input
+        use_som=True,            # For visual reference points
+        use_focused_element=True, # Track active element
+        use_error_logs=True,      # Notice errors
+        use_history=True,         # Remember previous actions
+        use_action_history=True,  # Track what's been done
+        use_think_history=False,  # More reactive than planned
+        extract_visible_tag=True, # See visible elements
+        extract_clickable_tag=True, # Identify interactive elements
+        extract_coords='box',     # For natural mouse movement
+        filter_visible_elements_only=True # Only interact with visible elements
+    ),
+    action=dp.ActionFlags(
+        action_set=bgym.HighLevelActionSetArgs(
+            subsets=["bid", "coordinate"],  # Enable both element and coordinate actions
+            multiaction=False
+        ),
+        long_description=False,
+        individual_examples=True,
+    ),
+    use_plan=False,              # Users are more reactive
+    use_thinking=True,           # Basic reasoning
+    use_memory=True,             # Remember context
+    use_concrete_example=True,   # Learn from examples
+    use_abstract_example=False,  # Focus on concrete actions
+    use_hints=True,             # Use interface hints
+    enable_chat=True,           # Enable user messages
+    max_prompt_tokens=40_000,
+    be_cautious=True,
+    extra_instructions="""Act like a real user browsing this website:
+- Take time to read content
+- Move mouse naturally between actions
+- Hover over items of interest
+- Type at human speed with occasional typos
+- React to visual feedback
+- Scroll naturally through content"""
+)
+
+USER_BEHAVIOR_AGENT = GenericAgentArgs(
+    agent_name="UserBehaviorAgent",
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4o-mini-2024-07-18"],
+    flags=FLAGS_USER_BEHAVIOR,
+)
+
 # GPT-4o vision default config
 FLAGS_GPT_4o_VISION = FLAGS_GPT_4o.copy()
 FLAGS_GPT_4o_VISION.obs.use_screenshot = True

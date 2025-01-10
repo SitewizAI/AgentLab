@@ -168,3 +168,4 @@ results/
 
 # gradio
 .gradio/
+/data/agentlab_results/tasks
