@@ -51,11 +51,6 @@ class TaskRequest(BaseModel):
 # Store study states
 studies = {}
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy"}
-
 def upload_to_s3(video_path: Path, experiment_id: str):
     """Upload video file to S3"""
     s3 = boto3.client('s3',

@@ -39,7 +39,8 @@ ENV DISPLAY=:99
 # Create volume mount point
 VOLUME /data
 
-EXPOSE 8000
+ENV PORT=8080
+EXPOSE 8080
 
 # Start Xvfb and the application
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & uvicorn main:app --host 0.0.0.0 --port 8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
